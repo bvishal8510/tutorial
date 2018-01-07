@@ -66,18 +66,17 @@ class SnippetList(APIView):
     def post(self, request, format=None):
         print("222222222222")
         serializer = SnippetSerializer(data=request.data)
-        # print(serializer.data)
-        print("3")
-        # self.pre_save(serializer)
-        print(self.request.user)
-        # print(serializer.owner)
-        serializer.owner = self.request.user
-        print("4")
+        queryset = User.objects.get(username=request.user)
+        print(queryset)
+        print(type(queryset))
+        # print(type(queryset.values('username')))
+        serializer.owner = queryset
+        print(serializer.owner)
         print(serializer.is_valid())
-        print(serializer.data)
         if serializer.is_valid():
             print("5")
             serializer.save()
+            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
