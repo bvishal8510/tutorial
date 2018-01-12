@@ -14,13 +14,14 @@ class SnippetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Snippet
+        # print("44444444444444444444444444444444")
         fields = ('id','owner', 'title', 'code', 'linenos', 'language', 'style',)
 
     def create(self, validated_data):
 
-        print("1111111111111111111111111111111111111111111111111111111111111111111111111111")
+        # print("1111111111111111111111111111111111111111111111111111111111111111111111111111")
         print(validated_data)
-        print("1111111111111111111111111111111111111111111111111111111111111111111111111111")
+        # print("1111111111111111111111111111111111111111111111111111111111111111111111111111")
         return Snippet.objects.create(**validated_data)
 
     def update(self, instance, validated_data):

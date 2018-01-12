@@ -1,5 +1,4 @@
 from rest_framework import status
-from rest_framework.response import Response
 from django.http import Http404
 from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
@@ -12,7 +11,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 from django.contrib.auth.models import User
 from rest_framework import generics
-# from snippets.permissions import IsOwnerOrReadOnly
+from snippets.permissions import IsOwnerOrReadOnly
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 
 class UserList(generics.ListAPIView):
@@ -23,6 +24,14 @@ class UserList(generics.ListAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'snippets': reverse('snippet-list', request=request, format=format)
+    })
 
 # @api_view(['GET', 'POST'])
 # @permission_classes((permissions.AllowAny,))
@@ -46,37 +55,21 @@ class SnippetList(APIView):
     """
     List all snippets, or create a new snippet.
     """
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)
 
     def get(self, request, format=None):
         snippets = Snippet.objects.all()
-        print("1111111111111111111")
+        # print("1111111111111111111")
         serializer = SnippetSerializer(snippets, many=True)
         return Response(serializer.data)
 
-    # def pre_save(self, serializer):
-    #     serializer.save(owner=self.request.user)
-    #
-    def pre_save(self, serializer):
-        print("10101010101010101010")
-        print(self.request.user)
-        serializer.owner = self.request.user
-        # serializer["owner"]= self.request.user
 
     def post(self, request, format=None):
-        print("222222222222")
+        # print("222222222222")
         serializer = SnippetSerializer(data=request.data)
-        queryset = User.objects.get(username=request.user)
-        print(queryset)
-        print(type(queryset))
-        # print(type(queryset.values('username')))
-        serializer.owner = queryset
-        print(serializer.owner)
-        print(serializer.is_valid())
         if serializer.is_valid():
-            print("5")
-            serializer.save()
-            print(serializer.data)
+            serializer.save(owner=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -108,7 +101,8 @@ class SnippetList(APIView):
 
 class SnippetDetail(APIView,):
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)
 
     def get_object(self, pk):
         try:
