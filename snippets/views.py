@@ -14,7 +14,16 @@ from rest_framework import generics
 from snippets.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import renderers
 
+
+class SnippetHighlight(generics.GenericAPIView):
+    queryset = Snippet.objects.all()
+    renderer_classes = (renderers.StaticHTMLRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.highlighted)
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
@@ -61,13 +70,13 @@ class SnippetList(APIView):
     def get(self, request, format=None):
         snippets = Snippet.objects.all()
         # print("1111111111111111111")
-        serializer = SnippetSerializer(snippets, many=True)
+        serializer = SnippetSerializer(snippets, context={'request': request},many=True)
         return Response(serializer.data)
 
 
     def post(self, request, format=None):
         # print("222222222222")
-        serializer = SnippetSerializer(data=request.data)
+        serializer = SnippetSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save(owner=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -112,12 +121,12 @@ class SnippetDetail(APIView,):
 
     def get(self, request, pk, format=None):
         snippet = self.get_object(pk)
-        serializer = SnippetSerializer(snippet)
+        serializer = SnippetSerializer(snippet, context={'request': request})
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
-        serializer = SnippetSerializer(snippet, data=request.data)
+        serializer = SnippetSerializer(snippet, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
