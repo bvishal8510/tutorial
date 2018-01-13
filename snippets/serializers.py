@@ -18,7 +18,7 @@ class SnippetSerializer(serializers.HyperlinkedModelSerializer):
         model = Snippet
         # print("44444444444444444444444444444444")
         # fields = ('id','owner', 'title', 'code', 'linenos', 'language', 'style',)
-        fields = ('url', 'id', 'highlight', 'owner',
+        fields = ('url', 'id', 'highlight', 'owner', 'document',
                   'title', 'code', 'linenos', 'language', 'style')
 
 
