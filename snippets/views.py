@@ -36,6 +36,11 @@ class SnippetViewSet(viewsets.ModelViewSet):
         snippet = self.get_object()
         return Response(snippet.highlighted)
 
+    @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
+    def document(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.document)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -103,8 +108,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 #         print("1111111111111111111")
         # serializer = SnippetSerializer(snippets, context={'request': request},many=True)
         # return Response(serializer.data)
-    #
-    #
+
+
     # def post(self, request, format=None):
     #     print("222222222222")
         # serializer = SnippetSerializer(data=request.data, context={'request': request})
@@ -112,7 +117,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         #     serializer.save(owner=self.request.user)
         #     return Response(serializer.data, status=status.HTTP_201_CREATED)
         # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#
+
 # @api_view(['GET', 'PUT', 'DELETE'])
 # @permission_classes((permissions.AllowAny,))
 # def snippet_detail(request, pk):

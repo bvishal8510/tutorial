@@ -13,6 +13,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class SnippetSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.CharField(source='owner.username')
     highlight = serializers.HyperlinkedIdentityField(view_name='snippet-highlight', format='html')
+
     # print('7888888888888888888888888')
     class Meta:
         model = Snippet
