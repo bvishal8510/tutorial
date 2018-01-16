@@ -20,7 +20,8 @@ class SnippetSerializer(serializers.HyperlinkedModelSerializer):
         # print("44444444444444444444444444444444")
         # fields = ('id','owner', 'title', 'code', 'linenos', 'language', 'style',)
         fields = ('url', 'id', 'highlight', 'owner', 'document',
-                  'title', 'code', 'linenos', 'language', 'style')
+                  'title', 'code',)
+                  # 'linenos', 'language', 'style')
 
 
     def create(self, validated_data):
@@ -36,8 +37,8 @@ class SnippetSerializer(serializers.HyperlinkedModelSerializer):
         """
         instance.title = validated_data.get('title', instance.title)
         instance.code = validated_data.get('code', instance.code)
-        instance.linenos = validated_data.get('linenos', instance.linenos)
-        instance.language = validated_data.get('language', instance.language)
-        instance.style = validated_data.get('style', instance.style)
+        # instance.linenos = validated_data.get('linenos', instance.linenos)
+        # instance.language = validated_data.get('language', instance.language)
+        # instance.style = validated_data.get('style', instance.style)
         instance.save()
         return instance

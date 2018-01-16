@@ -36,11 +36,6 @@ class SnippetViewSet(viewsets.ModelViewSet):
         snippet = self.get_object()
         return Response(snippet.highlighted)
 
-    @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
-    def document(self, request, *args, **kwargs):
-        snippet = self.get_object()
-        return Response(snippet.document)
-
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
