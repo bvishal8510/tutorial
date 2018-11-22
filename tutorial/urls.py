@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from django.conf import settings
 from django.conf.urls.static import static
-
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 # Serializers define the API representation.
 # class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -25,6 +25,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     # url(r'^', include(router.urls)),
     url(r'^', include('snippets.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-token-auth/', obtain_jwt_token),
+    url(r'^api-token-refresh/', refresh_jwt_token),
+    url(r'^api-token-verify/', verify_jwt_token),
     # url(r'^docs/', include('rest_framework_docs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
